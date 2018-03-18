@@ -4,7 +4,7 @@
 define('ROOT', dirname(__FILE__));
 
     // Подключаем авто-загрузчик классов.
-    require(ROOT.'/vendor/autoload.php');
+    require(__DIR__.'/vendor/autoload.php');
 
 
 echo "\n+----------------------------------------------------------+
@@ -29,13 +29,13 @@ echo "\n+----------------------------------------------------------+
             $ListImage = $image->listImage($SiteContent, $url); // Список картинок на указаном адрессе.
     
             $report = new model\Report;
-            $report->reportCSV($ListLinks, ''.ROOT.'/report_files/'.DOMAIN.'_List_Links.csv'); // Сохраняем список ссылок.
-            $report->reportCSV($ListImage, ''.ROOT.'/report_files/'.DOMAIN.'_List_Image.csv'); // Сохраняем список изображений.
+            $report->reportCSV($ListLinks, ''.__DIR__.'/report_files/'.DOMAIN.'_List_Links.csv'); // Сохраняем список ссылок.
+            $report->reportCSV($ListImage, ''.__DIR__.'/report_files/'.DOMAIN.'_List_Image.csv'); // Сохраняем список изображений.
     
             echo "\n\nНайдено ссылок: ".(count($ListLinks)-2).
             "\nНайдено изображений: ".(count($ListImage)-2).
-            "\n\nСписок найденых ссылок: ".ROOT.'\report_files\\'.DOMAIN.'_List_Links.csv'.
-            "\nСписок найденых изображений: ".ROOT.'\report_files\\'.DOMAIN.'_List_Image.csv';
+            "\n\nСписок найденых ссылок: ".__DIR__.'\report_files\\'.DOMAIN.'_List_Links.csv'.
+            "\nСписок найденых изображений: ".__DIR__.'\report_files\\'.DOMAIN.'_List_Image.csv';
             break;
 
         case 'help':

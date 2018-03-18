@@ -28,7 +28,7 @@ class Report
         }
 
     // Поиск файла отчета ссылок.
-        $fl_link = ROOT.'/report_files/'.$domain.'_List_Links.csv';
+        $fl_link = ROOT.'\report_files\\'.$domain.'_List_Links.csv';
         if(file_exists($fl_link)) {
             $f_link = fopen($fl_link, 'r');
             $arr_link = fgetcsv($f_link);
@@ -41,7 +41,7 @@ class Report
         }
 
     // Поиск файла отчета изображений.
-        $fl_img = ROOT.'/report_files/'.$domain.'_List_Image.csv';
+        $fl_img = ROOT.'\report_files\\'.$domain.'_List_Image.csv';
         if(file_exists($fl_img)) {
             $f_image = fopen($fl_img, 'r');
             $arr_img = fgetcsv($f_image);
@@ -56,13 +56,4 @@ class Report
         }
     }
 
-    public function openReportCSV()
-    {
-        $fl_link = fopen(''.ROOT.'/report_files/'.DOMAIN.'_List_Links.csv', 'r');
-        $arr_link = fgetcsv($fl_link);
-        $arr_link = array_unique($arr_link);
-        fclose($fl_link);
-
-        return $arr_link;
-    }
 }
