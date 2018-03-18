@@ -1,10 +1,13 @@
 <?php
 
+namespace model;
+
 class Links
 {
 
     // Поиск ссылок.
-    public static function ListLinks($site, $url) {
+    public static function listLinks($site, $url)
+    {
         preg_match_all('#<a.+?href=".+?//'.DOMAIN.'(.+?)".+?>#', $site, $links); // Ищем сылки только на указаном домене.
         array_shift($links);
 
@@ -17,7 +20,6 @@ class Links
         array_unshift($f_link, "Source link: ".$url."\n", '');
 
         return $f_link;
-
     }
 
 }

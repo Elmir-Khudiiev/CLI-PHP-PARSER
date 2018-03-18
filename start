@@ -3,57 +3,54 @@
 // Подключаем файлы
 define('ROOT', dirname(__FILE__));
 
-// Подключаем Router.php
-    require_once(ROOT.'/components/Router.php');
-
-// Сканирует и возвращает весь контент на странице.
-    require_once(ROOT.'/model/all_content.php');
-
-// Сканирует контент на наличие картинок.
-    require_once(ROOT.'/model/image.php');
-
-// Сканирует все ссылки на странтце.
-    require_once(ROOT.'/model/links.php');
-
-// Создает файт отчета CSV.
-    require_once(ROOT.'/model/report.php');
+    // Подключаем авто-загрузчик классов.
+    require(ROOT.'/vendor/autoload.php');
 
 
-echo "\n+----------------------------------------------------------+\n";
-echo "|------------->   ПАРСЕР ССЫЛОК И КАРТИНОК   <-------------|\n";
-echo "+----------------------------------------------------------+\n";
+echo "\n+----------------------------------------------------------+
+|------------->   ПАРСЕР ССЫЛОК И КАРТИНОК   <-------------|
++----------------------------------------------------------+\n";
 
 //Выбор команды действия
     echo "Список возможных команд: " ."\e[1m help \e[0m\n\n";
     $comand = readline('Введите команду для выполнения: ');
 
-    $getComand = new Comand;
 
-    if($comand == 'parse'){
-        $url = readline('Введите адрес страницы для парсенга: ');
-        $getComand->Parse($url);
-        
+    switch ($comand) {
+        case 'parse':
+            $url = readline('Введите адрес страницы для парсенга: ');
+            $content = new model\AllContent($url);
+            $SiteContent = $content->siteContent(); // Все содержимое на указаной странице.
+    
+            $link = new model\Links;
+            $ListLinks = $link->listLinks($SiteContent, $url); // Список ссылок на указаном адрессе.
+    
+            $image = new model\Image;
+            $ListImage = $image->listImage($SiteContent, $url); // Список картинок на указаном адрессе.
+    
+            $report = new model\Report;
+            $report->reportCSV($ListLinks, ''.ROOT.'/report_files/'.DOMAIN.'_List_Links.csv'); // Сохраняем список ссылок.
+            $report->reportCSV($ListImage, ''.ROOT.'/report_files/'.DOMAIN.'_List_Image.csv'); // Сохраняем список изображений.
+    
+            echo "\n\nНайдено ссылок: ".(count($ListLinks)-2).
+            "\nНайдено изображений: ".(count($ListImage)-2).
+            "\n\nСписок найденых ссылок: ".ROOT.'\report_files\\'.DOMAIN.'_List_Links.csv'.
+            "\nСписок найденых изображений: ".ROOT.'\report_files\\'.DOMAIN.'_List_Image.csv';
+            break;
 
-/* Тестовой способ парсинга всего сайта. ПОКА ЧТО НЕ РАБОЧИЙ.
-        $report = new Report;
-        $report_link = $report->OpenReportCSV();
+        case 'help':
+            echo "\nparse - запускает парсер, принимает обязательный параметр url (как с протоколом, так и без).".
+            "\nreport - выводит в консоль результаты анализа для домена.".
+            "\nhelp - выводит список команд с пояснениями.\n\n";
+            break;
 
-        foreach($report_link as $link) {
-            if(strlen($link) < 4) {
-                unset($link);
-            }
-            $getComand->Parse($link);
-        } 
-*/
+        case 'report':
+            $ReportList = new model\Report;
+            $domain = readline('Введите домен страницы, для поиска соответствия, найденых даных: ');
+            $ReportList->viewsReportCSV($domain);
+            break;
 
-
-    } elseif($comand == 'help') {
-        $getComand->Help();
-
-    } elseif($comand == 'report') {
-        $getComand->ReportList();
-        
-    } else {
-        echo "\n    \e[1m НЕ ВЕРНАЯ КОМАНДА!\e[0m\n\n";
-        exit();
+        default:
+            echo "\n    \e[1m НЕ ВЕРНАЯ КОМАНДА!\e[0m\n\n";
+            break;
     }

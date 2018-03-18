@@ -1,26 +1,16 @@
 <?php
 
+namespace model;
+
 class Image
 {
-
 // Поиск картинок
-    public function ListImage($site, $url) {
-        preg_match_all('#<img.+?src="(.+?).jpg".+?>#', $site, $result); // Поиск (.jpg).
-        preg_match_all('#<img.+?src="(.+?).png".+?>#', $site, $result1); // Поиск (.png).
-        preg_match_all('#<img.+?src="(.+?).gif".+?>#', $site, $result2); // Поиск (.gif).
+    public function listImage($site, $url) {
+        preg_match_all('#<img.+?src="(.+?)".+?>#', $site, $result);
 
-
-    //Валидация сылок на картинки
-
-        // Правка форматов для изображений и добавление всех ссылок в один масив $pictures.
+        //Валидация сылок на картинки
             foreach ($result[1] as $item) {
-                $pictures[] = DOMAIN .'/'. $item. '.jpg';
-            }
-            foreach ($result1[1] as $item) {
-                $pictures[] = DOMAIN .'/'. $item. '.png';
-            }
-            foreach ($result2[1] as $item) {
-                $pictures[] = DOMAIN .'/'. $item. '.gif';
+                $pictures[] = DOMAIN .'/'. $item;
             }
 
         // Удаление лишних символов
@@ -45,6 +35,5 @@ class Image
         return $f_pictures_link;
 
     }
-
 }
 
