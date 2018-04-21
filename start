@@ -19,16 +19,16 @@ echo "\n+----------------------------------------------------------+
     switch ($comand) {
         case 'parse':
             $url = readline('Введите адрес страницы для парсенга: ');
-            $content = new model\AllContent($url);
+            $content = new classes\AllContent($url);
             $SiteContent = $content->siteContent(); // Все содержимое на указаной странице.
     
-            $link = new model\Links;
+            $link = new classes\Links;
             $ListLinks = $link->listLinks($SiteContent, $url); // Список ссылок на указаном адрессе.
     
-            $image = new model\Image;
+            $image = new classes\Image;
             $ListImage = $image->listImage($SiteContent, $url); // Список картинок на указаном адрессе.
     
-            $report = new model\Report;
+            $report = new classes\Report;
             $report->reportCSV($ListLinks, ''.__DIR__.'/report_files/'.DOMAIN.'_List_Links.csv'); // Сохраняем список ссылок.
             $report->reportCSV($ListImage, ''.__DIR__.'/report_files/'.DOMAIN.'_List_Image.csv'); // Сохраняем список изображений.
     
@@ -39,13 +39,13 @@ echo "\n+----------------------------------------------------------+
             break;
 
         case 'help':
-            echo "\nparse - запускает парсер, принимает обязательный параметр url (как с протоколом, так и без).".
-            "\nreport - выводит в консоль результаты анализа для домена.".
-            "\nhelp - выводит список команд с пояснениями.\n\n";
+            echo "\nparse - Запускает парсер. Принимает обязательный параметр URL (как с протоколом, так и без).".
+            "\nreport - Выводит в консоль результаты анализа для домена.".
+            "\nhelp - Выводит список команд, с пояснениями.\n\n";
             break;
 
         case 'report':
-            $ReportList = new model\Report;
+            $ReportList = new classes\Report;
             $domain = readline('Введите домен страницы, для поиска соответствия, найденых даных: ');
             $ReportList->viewsReportCSV($domain);
             break;
