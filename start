@@ -1,10 +1,15 @@
 <?php
 
 // Подключаем файлы
-define('ROOT', dirname(__FILE__));
+define('ROOT', dirname(__FILE__)); // Создаем констанну (Адрес корневой папки парсера).
 
     // Подключаем авто-загрузчик классов.
     require(__DIR__.'/vendor/autoload.php');
+
+    use classes\AllContent;
+    use classes\Links;
+    use classes\Image;
+    use classes\Report;
 
 
 echo "\n+----------------------------------------------------------+
@@ -19,16 +24,16 @@ echo "\n+----------------------------------------------------------+
     switch ($comand) {
         case 'parse':
             $url = readline('Введите адрес страницы для парсенга: ');
-            $content = new classes\AllContent($url);
+            $content = new AllContent($url);
             $SiteContent = $content->siteContent(); // Все содержимое на указаной странице.
     
-            $link = new classes\Links;
+            $link = new Links;
             $ListLinks = $link->listLinks($SiteContent, $url); // Список ссылок на указаном адрессе.
     
-            $image = new classes\Image;
+            $image = new Image;
             $ListImage = $image->listImage($SiteContent, $url); // Список картинок на указаном адрессе.
     
-            $report = new classes\Report;
+            $report = new Report;
             $report->reportCSV($ListLinks, ''.__DIR__.'/report_files/'.DOMAIN.'_List_Links.csv'); // Сохраняем список ссылок.
             $report->reportCSV($ListImage, ''.__DIR__.'/report_files/'.DOMAIN.'_List_Image.csv'); // Сохраняем список изображений.
     
@@ -45,7 +50,7 @@ echo "\n+----------------------------------------------------------+
             break;
 
         case 'report':
-            $ReportList = new classes\Report;
+            $ReportList = new Report;
             $domain = readline('Введите домен страницы, для поиска соответствия, найденых даных: ');
             $ReportList->viewsReportCSV($domain);
             break;
