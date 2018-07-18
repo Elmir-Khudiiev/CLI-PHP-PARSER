@@ -6,6 +6,7 @@ define('ROOT', dirname(__FILE__)); // Создаем констанну (Адр�
     // Подключаем авто-загрузчик классов.
     require(__DIR__.'/vendor/autoload.php');
 
+    // Пространство имен кслассов.
     use classes\AllContent;
     use classes\Links;
     use classes\Image;
