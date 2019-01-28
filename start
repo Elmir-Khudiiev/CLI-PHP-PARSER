@@ -4,13 +4,13 @@
 define('ROOT', dirname(__FILE__)); // Создаем констанну (Адрес корневой папки парсера).
 
     // Подключаем авто-загрузчик классов.
-    require(__DIR__.'/vendor/autoload.php');
+require(ROOT . '/vendor/autoload.php');
 
     // Пространство имен кслассов.
-    use classes\AllContent;
-    use classes\Links;
-    use classes\Image;
-    use classes\Report;
+use classes\AllContent;
+use classes\Links;
+use classes\Image;
+use classes\Report;
 
 
 echo "\n+----------------------------------------------------------+
@@ -18,45 +18,65 @@ echo "\n+----------------------------------------------------------+
 +----------------------------------------------------------+\n";
 
 //Выбор команды действия
-    echo "Список возможных команд: " ."\e[1m help \e[0m\n\n";
-    $comand = readline('Введите команду для выполнения: ');
+echo "Список возможных команд: " . "\e[1m help \e[0m\n\n";
+$comand = readline('Введите команду для выполнения: ');
 
-
+function comand_cli($comand)
+{
     switch ($comand) {
         case 'parse':
             $url = readline('Введите адрес страницы для парсенга: ');
             $content = new AllContent($url);
             $SiteContent = $content->siteContent(); // Все содержимое на указаной странице.
-    
+
             $link = new Links;
             $ListLinks = $link->listLinks($SiteContent, $url); // Список ссылок на указаном адрессе.
-    
+
             $image = new Image;
             $ListImage = $image->listImage($SiteContent, $url); // Список картинок на указаном адрессе.
-    
+
             $report = new Report;
-            $report->reportCSV($ListLinks, ''.__DIR__.'/report_files/'.DOMAIN.'_List_Links.csv'); // Сохраняем список ссылок.
-            $report->reportCSV($ListImage, ''.__DIR__.'/report_files/'.DOMAIN.'_List_Image.csv'); // Сохраняем список изображений.
-    
-            echo "\n\nНайдено ссылок: ".(count($ListLinks)-2).
-            "\nНайдено изображений: ".(count($ListImage)-2).
-            "\n\nСписок найденых ссылок: ".__DIR__.'\report_files\\'.DOMAIN.'_List_Links.csv'.
-            "\nСписок найденых изображений: ".__DIR__.'\report_files\\'.DOMAIN.'_List_Image.csv';
+            $report->reportCSV($ListLinks, '' . ROOT . '/report_files/' . DOMAIN . '_List_Links.csv'); // Сохраняем список ссылок.
+            $report->reportCSV($ListImage, '' . ROOT . '/report_files/' . DOMAIN . '_List_Image.csv'); // Сохраняем список изображений.
+
+            echo "\n\nНайдено ссылок: " . (count($ListLinks) - 2) .
+                "\nНайдено изображений: " . (count($ListImage) - 2) .
+                "\n\nСписок найденых ссылок: " . ROOT . '/report_files/' . DOMAIN . '_List_Links.csv' .
+                "\nСписок найденых изображений: " . ROOT . '/report_files/' . DOMAIN . '_List_Image.csv' . "\n";
+
+            $sub_comand = readline("\nВведите команду для выполнения: ");
+            comand_cli($sub_comand);
             break;
 
         case 'help':
-            echo "\nparse - Запускает парсер. Принимает обязательный параметр URL (как с протоколом, так и без).".
-            "\nreport - Выводит в консоль результаты анализа для домена.".
-            "\nhelp - Выводит список команд, с пояснениями.\n\n";
+            echo "\nparse - Запускает парсер. Принимает обязательный параметр URL (как с протоколом, так и без)." .
+                "\nreport - Выводит в консоль результаты анализа для домена." .
+                "\nhelp - Выводит список команд, с пояснениями." .
+                "\nexit - Выход из приложения.\n\n";
+
+            $sub_comand = readline("\nВведите команду для выполнения: ");
+            comand_cli($sub_comand);
             break;
 
         case 'report':
             $ReportList = new Report;
             $domain = readline('Введите домен страницы, для поиска соответствия, найденых даных: ');
             $ReportList->viewsReportCSV($domain);
+
+            $sub_comand = readline("\nВведите команду для выполнения: ");
+            comand_cli($sub_comand);
+            break;
+
+        case 'exit':
+            exit;
             break;
 
         default:
-            echo "\n    \e[1m НЕ ВЕРНАЯ КОМАНДА!\e[0m\n\n";
+            comand_cli('help');
+
+            $sub_comand = readline("\nВведите команду для выполнения: ");
+            comand_cli($sub_comand);
             break;
     }
+}
+comand_cli($comand);
