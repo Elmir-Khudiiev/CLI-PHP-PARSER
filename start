@@ -3,10 +3,10 @@
 // Подключаем файлы
 define('ROOT', dirname(__FILE__)); // Создаем констанну (Адрес корневой папки парсера).
 
-    // Подключаем авто-загрузчик классов.
+// Подключаем авто-загрузчик классов.
 require(ROOT . '/vendor/autoload.php');
 
-    // Пространство имен кслассов.
+// Пространство имен кслассов.
 use classes\AllContent;
 use classes\Links;
 use classes\Image;
@@ -27,20 +27,23 @@ function comand_cli($comand)
         case 'parse':
             $url = readline('Введите адрес страницы для парсенга: ');
             $content = new AllContent($url);
-            $SiteContent = $content->siteContent(); // Все содержимое на указаной странице.
+            $site_content = $content->siteContent(); // Все содержимое на указаной странице.
 
             $link = new Links;
-            $ListLinks = $link->listLinks($SiteContent, $url); // Список ссылок на указаном адрессе.
+            $list_links = $link->listLinks($site_content, $url); // Список ссылок на указаном адрессе.
 
             $image = new Image;
-            $ListImage = $image->listImage($SiteContent, $url); // Список картинок на указаном адрессе.
+            $list_image = $image->listImage($site_content, $url); // Список картинок на указаном адрессе.
 
             $report = new Report;
-            $report->reportCSV($ListLinks, '' . ROOT . '/report_files/' . DOMAIN . '_List_Links.csv'); // Сохраняем список ссылок.
-            $report->reportCSV($ListImage, '' . ROOT . '/report_files/' . DOMAIN . '_List_Image.csv'); // Сохраняем список изображений.
+            if(!is_dir(ROOT . '/report_files/')) {
+                mkdir(ROOT . '/report_files/',0700);
+            }
+            $report->reportCSV($list_links, '' . ROOT . '/report_files/' . DOMAIN . '_List_Links.csv'); // Сохраняем список ссылок.
+            $report->reportCSV($list_image, '' . ROOT . '/report_files/' . DOMAIN . '_List_Image.csv'); // Сохраняем список изображений.
 
-            echo "\n\nНайдено ссылок: " . (count($ListLinks) - 2) .
-                "\nНайдено изображений: " . (count($ListImage) - 2) .
+            echo "\n\nНайдено ссылок: " . (count($list_links) - 2) .
+                "\nНайдено изображений: " . (count($list_image) - 2) .
                 "\n\nСписок найденых ссылок: " . ROOT . '/report_files/' . DOMAIN . '_List_Links.csv' .
                 "\nСписок найденых изображений: " . ROOT . '/report_files/' . DOMAIN . '_List_Image.csv' . "\n";
 
@@ -59,9 +62,9 @@ function comand_cli($comand)
             break;
 
         case 'report':
-            $ReportList = new Report;
+            $report_list = new Report;
             $domain = readline('Введите домен страницы, для поиска соответствия, найденых даных: ');
-            $ReportList->viewsReportCSV($domain);
+            $report_list->viewsReportCSV($domain);
 
             $sub_comand = readline("\nВведите команду для выполнения: ");
             comand_cli($sub_comand);

@@ -1,3 +1,5 @@
 # Файлы IDE
-
 /.vscode
+# Папки
+/vendor/
+/report_files/
